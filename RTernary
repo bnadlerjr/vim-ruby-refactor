@@ -1,0 +1,30 @@
+#!/usr/bin/env ruby
+##
+# Converts a Ruby ternary operator to a multi-line one and back again.
+lines = []
+while line = gets; lines << line.chomp!; end
+indent = "%#{lines.first.index(/[^\s]/)}s" % ''
+
+result = []
+
+# Single-line to multi-line
+if 1 == lines.length
+  parts = lines[0].partition(/\?.+:/)
+  stop = parts[1].length - 2
+  result << "if #{parts[0].strip}"
+  result << "  " + parts[1][1..stop].strip
+  result << "else"
+  result << "  " + parts[2].strip
+  result << "end"
+# 5 line to single line
+elsif 5 == lines.length
+  condition = lines[0].gsub('if', '').strip
+  statement_one = lines[1].strip
+  statement_two = lines[3].strip
+  result << "#{condition} ? #{statement_one} : #{statement_two}"
+# more than 5 lines so do nothing
+else
+  exit
+end
+
+print result.map { |line| indent + line + "\n" }.join('')
